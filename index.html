@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChefConnect - Connect with Professional Chefs & Food Influencers</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🍳 ChefConnect</h1>
+            <p class="tagline">Connect with Professional Chefs & Food Influencers</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- User Profile Section -->
+        <section id="user-profile" class="card">
+            <h2>Create Your Profile</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="username">Name:</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Meal Preferences:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="vegetarian"> Vegetarian
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="vegan"> Vegan
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="gluten-free"> Gluten-Free
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="keto"> Keto
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="paleo"> Paleo
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="mediterranean"> Mediterranean
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="low-carb"> Low-Carb
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="preferences" value="high-protein"> High-Protein
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="allergies">Food Allergies:</label>
+                    <textarea id="allergies" name="allergies" rows="4" 
+                              placeholder="List any food allergies (e.g., nuts, dairy, shellfish, eggs, soy)"></textarea>
+                    <small>Separate multiple allergies with commas</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="dietary-notes">Additional Dietary Notes:</label>
+                    <textarea id="dietary-notes" name="dietary-notes" rows="3" 
+                              placeholder="Any other dietary restrictions or preferences"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+            </form>
+        </section>
+
+        <!-- User Profile Display -->
+        <section id="profile-display" class="card" style="display: none;">
+            <h2>Your Profile</h2>
+            <div id="profile-info"></div>
+            <button id="edit-profile" class="btn btn-secondary">Edit Profile</button>
+            <button id="find-chefs" class="btn btn-primary">Find Chefs & Influencers</button>
+        </section>
+
+        <!-- Chefs & Influencers Directory -->
+        <section id="chefs-directory" class="card" style="display: none;">
+            <h2>Professional Chefs & Food Influencers</h2>
+            <div class="filter-section">
+                <label for="search-filter">Filter by specialty:</label>
+                <select id="search-filter">
+                    <option value="all">All Specialties</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="gluten-free">Gluten-Free</option>
+                    <option value="keto">Keto</option>
+                    <option value="paleo">Paleo</option>
+                    <option value="mediterranean">Mediterranean</option>
+                    <option value="italian">Italian</option>
+                    <option value="asian">Asian</option>
+                    <option value="french">French</option>
+                    <option value="mexican">Mexican</option>
+                </select>
+            </div>
+            <div id="chefs-list" class="chefs-grid"></div>
+        </section>
+
+        <!-- Connection Request Modal -->
+        <div id="connection-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Connect with <span id="modal-chef-name"></span></h2>
+                <p id="modal-chef-specialty"></p>
+                <div class="form-group">
+                    <label for="connection-message">Message:</label>
+                    <textarea id="connection-message" rows="4" 
+                              placeholder="Introduce yourself and why you'd like to connect..."></textarea>
+                </div>
+                <button id="send-connection" class="btn btn-primary">Send Connection Request</button>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success-message" class="alert alert-success" style="display: none;"></div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 ChefConnect - Connecting Food Lovers with Culinary Experts</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
