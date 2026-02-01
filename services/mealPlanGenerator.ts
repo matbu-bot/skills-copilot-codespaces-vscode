@@ -71,11 +71,19 @@ export async function generateMealPlan(preferences: MealPlanPreferences) {
   const mealTypes = ['breakfast', 'lunch', 'dinner']
   const usedRecipeIds = new Set<string>()
 
+  if (recipes.length === 0) {
+    throw new Error('No recipes available matching your dietary preferences. Please add more recipes or adjust your preferences.')
+  }
+
+  if (recipes.length < 7) {
+    console.warn(`Only ${recipes.length} recipes available for meal planning. Some days may have duplicate recipes.`)
+  }
+
   for (let day = 0; day < 7; day++) {
     // Only plan dinner by default (can be customized)
     const recipe = recipes.find(
       (r) => !usedRecipeIds.has(r.id)
-    )
+    ) || recipes[day % recipes.length] // Fallback to cycling through recipes
 
     if (recipe) {
       mealSlots.push({

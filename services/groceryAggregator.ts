@@ -89,6 +89,14 @@ function normalizeUnit(unit: string | null): string {
   return unitMap[unit.toLowerCase()] || unit
 }
 
+function normalizeIngredientName(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/s$/, '') // Remove trailing 's' for plurals
+    .replace(/\s+/g, ' ')
+}
+
 export async function generateGroceryList(mealPlanId: string) {
   // Get all meal slots with recipes
   const mealSlots = await prisma.mealSlot.findMany({
@@ -112,7 +120,8 @@ export async function generateGroceryList(mealPlanId: string) {
 
     for (const ingredient of slot.recipe.ingredients) {
       const normalizedUnit = normalizeUnit(ingredient.unit)
-      const key = `${ingredient.name.toLowerCase()}-${normalizedUnit}`
+      const normalizedName = normalizeIngredientName(ingredient.name)
+      const key = `${normalizedName}-${normalizedUnit}`
       
       const existing = ingredientMap.get(key)
       const quantity = (ingredient.quantity || 1) * servingMultiplier

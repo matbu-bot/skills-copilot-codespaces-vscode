@@ -31,6 +31,7 @@ export async function calculateWeeklyNutrition(
   let totalFat = 0
   let totalCarbs = 0
   let mealsCount = 0
+  const uniqueDays = new Set<number>()
 
   for (const slot of mealSlots) {
     if (!slot.recipe?.nutrition) continue
@@ -52,9 +53,10 @@ export async function calculateWeeklyNutrition(
     }
 
     mealsCount++
+    uniqueDays.add(slot.dayOfWeek)
   }
 
-  const daysWithMeals = mealsCount > 0 ? 7 : 1 // Assume 7 days
+  const daysWithMeals = uniqueDays.size || 1
 
   return {
     totalCalories: Math.round(totalCalories),

@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+const MAX_MEALS_PER_WEEK = 21 // 3 meals × 7 days
+
 export const signUpSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -22,7 +24,7 @@ export const profileSchema = z.object({
   cuisines: z.array(z.string()),
   healthGoals: z.array(z.string()),
   householdSize: z.number().min(1).max(20),
-  weeklyCookingCadence: z.number().min(1).max(21),
+  weeklyCookingCadence: z.number().min(1).max(MAX_MEALS_PER_WEEK),
 })
 
 export const recipeSchema = z.object({

@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Create test user
+  // Create test user (DEV ONLY - use stronger credentials in production)
   const hashedPassword = await bcrypt.hash('password123', 10)
   const user = await prisma.user.upsert({
     where: { email: 'demo@luma.app' },
