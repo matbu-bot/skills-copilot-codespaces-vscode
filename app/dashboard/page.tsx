@@ -5,6 +5,8 @@ import { Navbar } from '@/components/ui/Navbar'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
   

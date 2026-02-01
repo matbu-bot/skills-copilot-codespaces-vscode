@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Navbar } from '@/components/ui/Navbar'
 import { Button } from '@/components/ui/Button'
@@ -20,7 +20,7 @@ interface MealSlot {
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-export default function PlannerPage() {
+function PlannerContent() {
   const searchParams = useSearchParams()
   const [mealPlan, setMealPlan] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -163,5 +163,20 @@ export default function PlannerPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function PlannerPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading planner...</div>
+        </div>
+      </div>
+    }>
+      <PlannerContent />
+    </Suspense>
   )
 }

@@ -6,6 +6,8 @@ import { RecipeCard } from '@/components/recipes/RecipeCard'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RecipesPage() {
   const session = await getServerSession(authOptions)
   
