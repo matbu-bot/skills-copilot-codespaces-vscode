@@ -6,6 +6,11 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database...')
 
+  // Prevent seeding with weak credentials in production
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Cannot seed with demo credentials in production. Use proper user management.')
+  }
+
   // Create test user (DEV ONLY - use stronger credentials in production)
   const hashedPassword = await bcrypt.hash('password123', 10)
   const user = await prisma.user.upsert({

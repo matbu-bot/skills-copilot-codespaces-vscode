@@ -14,7 +14,7 @@ A production-ready, full-stack recipe and meal-planning web application that hel
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14+ (App Router), TypeScript, Tailwind CSS
+- **Frontend**: Next.js 16 (App Router), TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js with credentials provider

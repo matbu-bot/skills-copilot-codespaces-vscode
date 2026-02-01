@@ -90,11 +90,19 @@ function normalizeUnit(unit: string | null): string {
 }
 
 function normalizeIngredientName(name: string): string {
-  return name
+  const normalized = name
     .toLowerCase()
     .trim()
-    .replace(/s$/, '') // Remove trailing 's' for plurals
     .replace(/\s+/g, ' ')
+  
+  // Simple plural handling - only remove 's' if preceded by a vowel or specific consonants
+  // This prevents issues with words like 'pass', 'grass', etc.
+  // For production, consider using a library like 'pluralize' for accurate handling
+  if (normalized.length > 3 && /[aeiou]s$/.test(normalized)) {
+    return normalized.slice(0, -1)
+  }
+  
+  return normalized
 }
 
 export async function generateGroceryList(mealPlanId: string) {
