@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  password      String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  profile       UserProfile?
+  recipes       Recipe[]
+  preferences   RecipePreference[]
+  mealPlans     MealPlan[]
+}
+
+model UserProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dietaryPatterns       String[] // ["vegetarian", "vegan", "pescatarian", etc.]
+  allergies             String[] // ["nuts", "dairy", "gluten", etc.]
+  dislikedIngredients   String[]
+  timeToCook            Int?     // minutes
+  cuisines              String[] // ["italian", "mexican", "asian", etc.]
+  healthGoals           String[] // ["weight-loss", "muscle-gain", "heart-healthy", etc.]
+  householdSize         Int      @default(1)
+  weeklyCookingCadence  Int      @default(3) // times per week
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Recipe {
+  id              String              @id @default(cuid())
+  userId          String?
+  user            User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  title           String
+  description     String?             @db.Text
+  prepTime        Int?                // minutes
+  totalTime       Int                 // minutes
+  servings        Int                 @default(4)
+  imageUrl        String?
+  source          String?             // URL or "user-created"
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  ingredients     Ingredient[]
+  steps           RecipeStep[]
+  tags            RecipeTag[]
+  preferences     RecipePreference[]
+  nutrition       RecipeNutrition?
+  mealSlots       MealSlot[]
+  collections     CollectionRecipe[]
+}
+
+model Ingredient {
+  id        String   @id @default(cuid())
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name      String
+  quantity  Float?
+  unit      String?
+  notes     String?
+  sortOrder Int      @default(0)
+}
+
+model RecipeStep {
+  id          String   @id @default(cuid())
+  recipeId    String
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  stepNumber  Int
+  instruction String   @db.Text
+}
+
+model RecipeTag {
+  id        String   @id @default(cuid())
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  tagType   String   // "cuisine", "mealType", "dietary", "occasion"
+  tagValue  String   // "italian", "dinner", "vegan", "date-night"
+  
+  @@unique([recipeId, tagType, tagValue])
+}
+
+model RecipePreference {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  liked     Boolean  // true = liked, false = disliked
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, recipeId])
+}
+
+model RecipeNutrition {
+  id         String  @id @default(cuid())
+  recipeId   String  @unique
+  recipe     Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  calories   Int?
+  protein    Float?  // grams
+  fat        Float?  // grams
+  carbs      Float?  // grams
+  fiber      Float?  // grams
+  sugar      Float?  // grams
+  sodium     Float?  // mg
+  perServing Boolean @default(true)
+}
+
+model MealPlan {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStartDate DateTime     // Monday of the week
+  name          String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  mealSlots     MealSlot[]
+  groceryList   GroceryList?
+}
+
+model MealSlot {
+  id          String    @id @default(cuid())
+  mealPlanId  String
+  mealPlan    MealPlan  @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int       // 0 = Monday, 6 = Sunday
+  mealType    String    // "breakfast", "lunch", "dinner", "snack"
+  recipeId    String?
+  recipe      Recipe?   @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+  locked      Boolean   @default(false)
+  servings    Int       @default(4)
+  notes       String?
+}
+
+model GroceryList {
+  id         String        @id @default(cuid())
+  mealPlanId String        @unique
+  mealPlan   MealPlan      @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  items      GroceryItem[]
+}
+
+model GroceryItem {
+  id            String       @id @default(cuid())
+  groceryListId String
+  groceryList   GroceryList  @relation(fields: [groceryListId], references: [id], onDelete: Cascade)
+  name          String
+  quantity      Float
+  unit          String
+  category      String       // "produce", "dairy", "meat", "pantry", etc.
+  checked       Boolean      @default(false)
+  alreadyHave   Boolean      @default(false)
+  sortOrder     Int          @default(0)
+}
+
+model Collection {
+  id          String             @id @default(cuid())
+  title       String
+  description String?            @db.Text
+  featured    Boolean            @default(false)
+  imageUrl    String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  recipes     CollectionRecipe[]
+}
+
+model CollectionRecipe {
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipeId     String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0)
+  
+  @@id([collectionId, recipeId])
+}
