@@ -6,7 +6,7 @@ import { generateGroceryList } from '@/services/groceryAggregator'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { mealPlanId: string } }
+  { params }: { params: Promise<{ mealPlanId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -15,8 +15,9 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { mealPlanId } = await params
     let groceryList = await prisma.groceryList.findUnique({
-      where: { mealPlanId: params.mealPlanId },
+      where: { mealPlanId },
       include: {
         items: {
           orderBy: [
@@ -28,7 +29,7 @@ export async function GET(
     })
 
     if (!groceryList) {
-      const listId = await generateGroceryList(params.mealPlanId)
+      const listId = await generateGroceryList(mealPlanId)
       groceryList = await prisma.groceryList.findUnique({
         where: { id: listId },
         include: {
@@ -54,7 +55,7 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { mealPlanId: string } }
+  { params }: { params: Promise<{ mealPlanId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)

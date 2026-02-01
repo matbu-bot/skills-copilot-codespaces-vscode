@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
-import { Button } from './ui/Button'
+import { Button } from '@/components/ui/Button'
 
 export function Navbar() {
   const pathname = usePathname()

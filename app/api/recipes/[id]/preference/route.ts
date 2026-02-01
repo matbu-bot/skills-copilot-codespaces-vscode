@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -15,6 +15,7 @@ export async function POST(
     }
 
     const { liked } = await req.json()
+    const { id } = await params
 
     if (typeof liked !== 'boolean') {
       return NextResponse.json({ error: 'Invalid liked value' }, { status: 400 })
@@ -24,13 +25,13 @@ export async function POST(
       where: {
         userId_recipeId: {
           userId: session.user.id,
-          recipeId: params.id,
+          recipeId: id,
         },
       },
       update: { liked },
       create: {
         userId: session.user.id,
-        recipeId: params.id,
+        recipeId: id,
         liked,
       },
     })

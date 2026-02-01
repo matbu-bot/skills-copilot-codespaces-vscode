@@ -6,7 +6,7 @@ import { regenerateMealSlot } from '@/services/mealPlanGenerator'
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -16,6 +16,7 @@ export async function POST(
     }
 
     const { slotId } = await req.json()
+    const { id } = await params
 
     if (!slotId) {
       return NextResponse.json(
@@ -24,7 +25,7 @@ export async function POST(
       )
     }
 
-    const newRecipeId = await regenerateMealSlot(params.id, slotId)
+    const newRecipeId = await regenerateMealSlot(id, slotId)
 
     const updatedSlot = await prisma.mealSlot.update({
       where: { id: slotId },
