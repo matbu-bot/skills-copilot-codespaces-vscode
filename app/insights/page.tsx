@@ -3,7 +3,10 @@ import { Navbar } from '@/components/ui/Navbar'
 export default function InsightsPage() {
   const weekDate = new Date()
   const weekStart = new Date(weekDate)
-  weekStart.setDate(weekDate.getDate() - weekDate.getDay() + 1)
+  // getDay() returns 0=Sunday...6=Saturday; adjust to start on Monday
+  const dayOfWeek = weekDate.getDay()
+  const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  weekStart.setDate(weekDate.getDate() - daysFromMonday)
   const weekLabel = weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 
   const macros = {
@@ -77,12 +80,12 @@ export default function InsightsPage() {
               <svg viewBox="0 0 120 120" className="w-36 h-36 mb-4">
                 {/* Simple donut chart using SVG */}
                 {(() => {
-                  const total = 68 + 220 + 72
                   const segments = [
-                    { value: 68, color: '#60a5fa', label: 'Protein' },
-                    { value: 220, color: '#facc15', label: 'Carbs' },
-                    { value: 72, color: '#4ade80', label: 'Fat' },
+                    { value: macros.protein.current, color: '#60a5fa', label: 'Protein' },
+                    { value: macros.carbs.current, color: '#facc15', label: 'Carbs' },
+                    { value: macros.fat.current, color: '#4ade80', label: 'Fat' },
                   ]
+                  const total = segments.reduce((sum, s) => sum + s.value, 0)
                   const r = 45
                   const cx = 60
                   const cy = 60
@@ -100,15 +103,19 @@ export default function InsightsPage() {
                   })
                 })()}
                 <circle cx="60" cy="60" r="28" fill="white" />
-                <text x="60" y="57" textAnchor="middle" className="text-xs" fontSize="8" fill="#374151">2,100</text>
+                <text x="60" y="57" textAnchor="middle" className="text-xs" fontSize="8" fill="#374151">{macros.calories.current.toLocaleString()}</text>
                 <text x="60" y="67" textAnchor="middle" fontSize="7" fill="#9ca3af">kcal</text>
               </svg>
               <div className="space-y-1.5 w-full">
-                {[['Protein', '#60a5fa', '68g', '19%'], ['Carbs', '#facc15', '220g', '61%'], ['Fat', '#4ade80', '72g', '20%']].map(([label, color, val, pct]) => (
-                  <div key={label as string} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color as string }} />
+                {[
+                  { label: 'Protein', color: '#60a5fa', value: `${macros.protein.current}g`, pct: `${Math.round((macros.protein.current / (macros.protein.current + macros.carbs.current + macros.fat.current)) * 100)}%` },
+                  { label: 'Carbs', color: '#facc15', value: `${macros.carbs.current}g`, pct: `${Math.round((macros.carbs.current / (macros.protein.current + macros.carbs.current + macros.fat.current)) * 100)}%` },
+                  { label: 'Fat', color: '#4ade80', value: `${macros.fat.current}g`, pct: `${Math.round((macros.fat.current / (macros.protein.current + macros.carbs.current + macros.fat.current)) * 100)}%` },
+                ].map(({ label, color, value, pct }) => (
+                  <div key={label} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
                     <span className="text-sm text-gray-600 flex-1">{label}</span>
-                    <span className="text-sm font-medium">{val}</span>
+                    <span className="text-sm font-medium">{value}</span>
                     <span className="text-xs text-gray-400">{pct}</span>
                   </div>
                 ))}

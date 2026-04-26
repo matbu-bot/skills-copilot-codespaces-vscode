@@ -23,7 +23,7 @@ export function Navbar() {
 
   if (!session) return null
 
-  const isActive = (href: string) => pathname === href || pathname?.startsWith(href + '/')
+  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
